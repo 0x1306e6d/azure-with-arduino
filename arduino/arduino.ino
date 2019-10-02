@@ -2,6 +2,8 @@
 
 #include <time.h>
 
+#include <AzureIoTHub.h>
+#include <AzureIoTProtocol_MQTT.h>
 #include <ESP8266WiFi.h>
 
 void initSerial()
@@ -54,6 +56,21 @@ void initTime()
   }
 }
 
+static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle = NULL;
+
+void initIoTHubClient()
+{
+  iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(IOTHUB_CONNECTION_STRING, MQTT_Protocol);
+  if (iotHubClientHandle != NULL)
+  {
+    Serial.println("IoTHubClient_LL_CreateFromConnectionString OK");
+  }
+  else
+  {
+    Serial.println("IoTHubClient_LL_CreateFromConnectionString FAIL");
+  }
+}
+
 // the setup function runs once when you press reset or power the board
 void setup()
 {
@@ -62,6 +79,8 @@ void setup()
   initWifi();
   initTime();
 
+  initIoTHubClient();
+
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
 }
@@ -69,6 +88,11 @@ void setup()
 // the loop function runs over and over again forever
 void loop()
 {
+  if (iotHubClientHandle != NULL)
+  {
+    IoTHubClient_LL_DoWork(iotHubClientHandle);
+  }
+
   digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);                       // wait for a second
   digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
