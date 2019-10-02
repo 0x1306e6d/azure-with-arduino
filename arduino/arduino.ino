@@ -111,6 +111,13 @@ void sendIoTHubMessage(const char *source)
   iotHubMessageTrackingId++;
 }
 
+static DHT dht(DHTPIN, DHTTYPE);
+
+void initDHT()
+{
+  dht.begin();
+}
+
 // the setup function runs once when you press reset or power the board
 void setup()
 {
