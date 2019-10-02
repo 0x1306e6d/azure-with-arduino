@@ -141,8 +141,8 @@ void loop()
     if ((loopCount % 1000) == 0)
     {
       StaticJsonDocument<256> json;
-      json["temperature"] = 0;
-      json["humidity"] = 0;
+      json["temperature"] = dht.readTemperature();
+      json["humidity"] = dht.readHumidity();
 
       char buffer[256];
       serializeJson(json, buffer, 256);
