@@ -2,6 +2,7 @@
 
 #include <time.h>
 
+#include <ArduinoJson.h>
 #include <AzureIoTHub.h>
 #include <AzureIoTProtocol_MQTT.h>
 #include <ESP8266WiFi.h>
@@ -57,6 +58,7 @@ void initTime()
 }
 
 static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle = NULL;
+static unsigned int iotHubMessageTrackingId = 0;
 
 void initIoTHubClient()
 {
@@ -69,6 +71,40 @@ void initIoTHubClient()
   {
     Serial.println("IoTHubClient_LL_CreateFromConnectionString FAIL");
   }
+}
+
+void sendIoTHubMessageCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void *userContextCallback)
+{
+  unsigned int messageTrackingId = (unsigned int)(uintptr_t)userContextCallback;
+
+  Serial.print("sendIoTHubMessageCallback ");
+  Serial.print(ENUM_TO_STRING(IOTHUB_CLIENT_CONFIRMATION_RESULT, result));
+  Serial.print(", messageTrackingId: ");
+  Serial.println(messageTrackingId);
+}
+
+void sendIoTHubMessage(const char *source)
+{
+  IOTHUB_MESSAGE_HANDLE messageHandle = IoTHubMessage_CreateFromString(source);
+  if (messageHandle == NULL)
+  {
+    Serial.println("IoTHubMessage_CreateFromString FAIL");
+  }
+  else
+  {
+    if (IoTHubClient_LL_SendEventAsync(iotHubClientHandle, messageHandle, sendIoTHubMessageCallback, (void *)(uintptr_t)iotHubMessageTrackingId) == IOTHUB_CLIENT_OK)
+    {
+      Serial.println("IoTHubClient_LL_SendEventAsync OK");
+    }
+    else
+    {
+      Serial.println("IoTHubClient_LL_SendEventAsync FAIL");
+    }
+
+    IoTHubMessage_Destroy(messageHandle);
+  }
+
+  iotHubMessageTrackingId++;
 }
 
 // the setup function runs once when you press reset or power the board
@@ -86,15 +122,25 @@ void setup()
 }
 
 // the loop function runs over and over again forever
+static int loopCount = 0;
 void loop()
 {
   if (iotHubClientHandle != NULL)
   {
+    if ((loopCount % 1000) == 0)
+    {
+      StaticJsonDocument<256> json;
+      json["temperature"] = 0;
+      json["humidity"] = 0;
+
+      char buffer[256];
+      serializeJson(json, buffer, 256);
+      sendIoTHubMessage(buffer);
+    }
+
     IoTHubClient_LL_DoWork(iotHubClientHandle);
+    loopCount++;
   }
 
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
+  delay(100);
 }
