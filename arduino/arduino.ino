@@ -111,6 +111,13 @@ void sendIoTHubMessage(const char *source)
   iotHubMessageTrackingId++;
 }
 
+static DHT dht(DHTPIN, DHTTYPE);
+
+void initDHT()
+{
+  dht.begin();
+}
+
 // the setup function runs once when you press reset or power the board
 void setup()
 {
@@ -134,8 +141,8 @@ void loop()
     if ((loopCount % 1000) == 0)
     {
       StaticJsonDocument<256> json;
-      json["temperature"] = 0;
-      json["humidity"] = 0;
+      json["temperature"] = dht.readTemperature();
+      json["humidity"] = dht.readHumidity();
 
       char buffer[256];
       serializeJson(json, buffer, 256);
