@@ -77,6 +77,8 @@ void sendIoTHubMessageCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void *u
 {
   unsigned int messageTrackingId = (unsigned int)(uintptr_t)userContextCallback;
 
+  digitalWrite(LED_BUILTIN, HIGH); // turn the LED off
+
   Serial.print("sendIoTHubMessageCallback ");
   Serial.print(ENUM_TO_STRING(IOTHUB_CLIENT_CONFIRMATION_RESULT, result));
   Serial.print(", messageTrackingId: ");
@@ -94,6 +96,8 @@ void sendIoTHubMessage(const char *source)
   {
     if (IoTHubClient_LL_SendEventAsync(iotHubClientHandle, messageHandle, sendIoTHubMessageCallback, (void *)(uintptr_t)iotHubMessageTrackingId) == IOTHUB_CLIENT_OK)
     {
+      digitalWrite(LED_BUILTIN, LOW); // turn the LED on
+
       Serial.println("IoTHubClient_LL_SendEventAsync OK");
     }
     else
