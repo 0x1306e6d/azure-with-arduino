@@ -1,5 +1,9 @@
 #include "config.h"
 
+#include <time.h>
+
+#include <ESP8266WiFi.h>
+
 void initSerial()
 {
   // Start serial and initialize stdout
@@ -8,10 +12,55 @@ void initSerial()
   Serial.println("Serial.begin OK");
 }
 
+void initWifi()
+{
+  // Attempt to connect to Wifi network:
+  Serial.print("Attempting to connect to SSID: ");
+  Serial.println(IOT_CONFIG_WIFI_SSID);
+
+  // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  WiFi.begin(IOT_CONFIG_WIFI_SSID, IOT_CONFIG_WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+  Serial.println("WiFi.begin OK");
+}
+
+void initTime()
+{
+  time_t epochTime;
+
+  configTime(0, 0, NTP_SERVER);
+
+  while (true)
+  {
+    epochTime = time(NULL);
+
+    if (epochTime < NTP_MIN_EPOCH)
+    {
+      Serial.println("configTime FAIL");
+      delay(2000);
+    }
+    else
+    {
+      Serial.print("configTime OK, epochTime: ");
+      Serial.println(epochTime);
+      break;
+    }
+  }
+}
+
 // the setup function runs once when you press reset or power the board
 void setup()
 {
   initSerial();
+
+  initWifi();
+  initTime();
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
