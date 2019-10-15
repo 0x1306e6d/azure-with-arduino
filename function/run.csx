@@ -4,6 +4,7 @@
 
 using System;
 using System.Text;
+using Microsoft.Azure.Devices;
 using Microsoft.Azure.EventHubs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,6 +26,14 @@ using SendGrid.Helpers.Mail;
         temperature = temperature,
         humidity = humidity,
     };
+
+    string connectionString = System.Environment.GetEnvironmentVariable("iotHubConnectionString");
+    string deviceId = System.Environment.GetEnvironmentVariable("iotHubDeviceId");
+    using (ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(connectionString))
+    {
+        Message commandMessage = new Message(Encoding.UTF8.GetBytes("hello world!"));
+        serviceClient.SendAsync(deviceId, commandMessage).Wait();
+    }
 
     SendGridMessage message = new SendGridMessage();
     message.AddTo(new  EmailAddress("{Your Email To Send}"));

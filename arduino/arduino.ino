@@ -60,12 +60,42 @@ void initTime()
 static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle = NULL;
 static unsigned int iotHubMessageTrackingId = 0;
 
+IOTHUBMESSAGE_DISPOSITION_RESULT receiveMessageCallback(IOTHUB_MESSAGE_HANDLE message, void *userContextCallback)
+{
+  const unsigned char *buffer;
+  size_t bufferSize;
+
+  if (IoTHubMessage_GetByteArray(message, &buffer, &bufferSize) == IOTHUB_MESSAGE_OK)
+  {
+    char *command = (char *)malloc(bufferSize + 1);
+    if (command == NULL)
+    {
+      return IOTHUBMESSAGE_ABANDONED;
+    }
+
+    strncpy(command, (const char *)buffer, bufferSize);
+    command[bufferSize] = '\0';
+    Serial.print("receiveMessageCallback: ");
+    Serial.println(command);
+
+    free(command);
+
+    return IOTHUBMESSAGE_ACCEPTED;
+  }
+  else
+  {
+    return IOTHUBMESSAGE_REJECTED;
+  }
+}
+
 void initIoTHubClient()
 {
   iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(IOTHUB_CONNECTION_STRING, MQTT_Protocol);
   if (iotHubClientHandle != NULL)
   {
     Serial.println("IoTHubClient_LL_CreateFromConnectionString OK");
+
+    IoTHubClient_LL_SetMessageCallback(iotHubClientHandle, receiveMessageCallback, NULL);
   }
   else
   {
