@@ -1,13 +1,15 @@
 #r "Microsoft.Azure.EventHubs“
 #r "Newtonsoft.Json“
+#r "SendGrid“
 
 using System;
 using System.Text;
 using Microsoft.Azure.EventHubs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SendGrid.Helpers.Mail;
 
-public static void Run(EventData myIoTHubMessage, out object outputDocument, ILogger log)
+public static SendGridMessage Run(EventData myIoTHubMessage, out object outputDocument, ILogger log)
 {
     log.LogInformation($"Event: {Encoding.UTF8.GetString(myIoTHubMessage.Body)}");
     log.LogInformation($"EnqueuedTimeUtc: {myIoTHubMessage.SystemProperties.EnqueuedTimeUtc}");
@@ -23,4 +25,6 @@ using Newtonsoft.Json.Linq;
         temperature = temperature,
         humidity = humidity,
     };
+
+    return null;
 }

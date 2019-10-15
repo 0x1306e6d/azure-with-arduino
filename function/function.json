@@ -16,6 +16,12 @@
             "createIfNotExists": true,
             "connectionStringSetting": "{Your Cosmos DB Connection String}",
             "direction": "out"
+        },
+        {
+            "type": "sendGrid",
+            "name": "$return",
+            "apiKey": "{Your SendGrid API Key}",
+            "direction": "out"
         }
     ],
     "disabled": false
