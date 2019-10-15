@@ -1,0 +1,13 @@
+{
+    "bindings": [
+        {
+            "type": "eventHubTrigger",
+            "name": "myIoTHubMessage",
+            "direction": "in",
+            "eventHubName": "samples-workitems",
+            "connection": "gihwan-iothub_events_IOTHUB",
+            "consumerGroup": "$Default"
+        }
+    ],
+    "disabled": false
+}
