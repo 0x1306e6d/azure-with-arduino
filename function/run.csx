@@ -26,5 +26,10 @@ using SendGrid.Helpers.Mail;
         humidity = humidity,
     };
 
-    return null;
+    SendGridMessage message = new SendGridMessage();
+    message.AddTo(new  EmailAddress("{Your Email To Send}"));
+    message.AddContent("text/plain", $"Temperature: {temperature}, Humidity: {humidity}");
+    message.SetFrom(new EmailAddress("{Your Email From Sent}"));
+    message.SetSubject("{Your Email Subject}");
+    return message;
 }
