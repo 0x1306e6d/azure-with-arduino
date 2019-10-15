@@ -7,7 +7,7 @@ using Microsoft.Azure.EventHubs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-public static void Run(EventData myIoTHubMessage, ILogger log)
+public static void Run(EventData myIoTHubMessage, out object outputDocument, ILogger log)
 {
     log.LogInformation($"Event: {Encoding.UTF8.GetString(myIoTHubMessage.Body)}");
     log.LogInformation($"EnqueuedTimeUtc: {myIoTHubMessage.SystemProperties.EnqueuedTimeUtc}");

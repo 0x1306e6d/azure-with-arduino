@@ -7,6 +7,15 @@
             "eventHubName": "samples-workitems",
             "connection": "gihwan-iothub_events_IOTHUB",
             "consumerGroup": "$Default"
+        },
+        {
+            "type": "cosmosDB",
+            "name": "outputDocument",
+            "databaseName": "outDatabase",
+            "collectionName": "MyCollection",
+            "createIfNotExists": true,
+            "connectionStringSetting": "gihwan-cosmosdb_DOCUMENTDB",
+            "direction": "out"
         }
     ],
     "disabled": false
