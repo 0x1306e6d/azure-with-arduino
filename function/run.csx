@@ -18,4 +18,9 @@ using Newtonsoft.Json.Linq;
     var temperature = body["temperature"];
     var humidity = body["humidity"];
     log.LogInformation($"Temperature: {temperature}, Humidity: {humidity}");
+
+    outputDocument = new {
+        temperature = temperature,
+        humidity = humidity,
+    };
 }
