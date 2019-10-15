@@ -4,17 +4,17 @@
             "type": "eventHubTrigger",
             "name": "myIoTHubMessage",
             "direction": "in",
-            "eventHubName": "samples-workitems",
-            "connection": "gihwan-iothub_events_IOTHUB",
+            "eventHubName": "{Your Event Hub Name}",
+            "connection": "{Your IoT Hub Connection}",
             "consumerGroup": "$Default"
         },
         {
             "type": "cosmosDB",
             "name": "outputDocument",
-            "databaseName": "outDatabase",
-            "collectionName": "MyCollection",
+            "databaseName": "{Your Cosmos DB Database}",
+            "collectionName": "{Your Cosmos DB Collection}",
             "createIfNotExists": true,
-            "connectionStringSetting": "gihwan-cosmosdb_DOCUMENTDB",
+            "connectionStringSetting": "{Your Cosmos DB Connection String}",
             "direction": "out"
         }
     ],
